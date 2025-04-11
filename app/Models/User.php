@@ -27,6 +27,7 @@ class User extends Authenticatable
         'weight',
         'height',
         'profile_completed',
+        'photo_path',
     ];
 
     /**
@@ -51,5 +52,12 @@ class User extends Authenticatable
             'password' => 'hashed',
             'birthdate'=> 'date',
         ];
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo_path
+            ? asset('storage/' . $this->photo_path)
+            : null;
     }
 }

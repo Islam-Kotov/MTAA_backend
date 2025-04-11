@@ -109,6 +109,7 @@ class UserController extends Controller
                 'birthdate' => 'required',
                 'weight'=> 'required',
                 'height'=> 'required',
+                'photo'=> 'sometimes|file',
             ]);
 
             if($validate->fails()){
@@ -118,7 +119,7 @@ class UserController extends Controller
                     'errors' => $validate->errors()
                 ], 422);
             }
-
+            
             auth()->user()->update([
                 'gender'=> $request->gender,
                 'birthdate'=> $request->birthdate,
@@ -126,6 +127,16 @@ class UserController extends Controller
                 'height'=> $request->height,
                 'profile_completed'=> true,
             ]);
+
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $filename = 'avatar_' . auth()->user()->id . '.' . $file->getClientOriginalExtension();
+                
+                $path = $file->storeAs('avatars', $filename, 'public');
+                
+                auth()->user()->photo_path = $path;
+                auth()->user()->save();
+            }
 
             return response()->json([
                 'status' => true,
@@ -150,6 +161,7 @@ class UserController extends Controller
             'weight' => auth()->user()->weight,
             'height' => auth()->user()->height,
             'profile_completed' => auth()->user()->profile_completed,
+            'photo_url' => auth()->user()->photo_url,
         ]);
     }
 }
