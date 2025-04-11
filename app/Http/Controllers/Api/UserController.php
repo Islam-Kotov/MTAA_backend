@@ -74,7 +74,7 @@ class UserController extends Controller
                     'status' => false,
                     'message' => 'validation error',
                     'errors' => $validateUser->errors()
-                ], 401);
+                ], 422);
             }
 
             if(!Auth::attempt($request->only(['email', 'password']))){
@@ -99,8 +99,57 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function saveProfile(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), 
+            [
+                'gender' => 'required',
+                'birthdate' => 'required',
+                'weight'=> 'required',
+                'height'=> 'required',
+            ]);
+
+            if($validate->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validate->errors()
+                ], 422);
+            }
+
+            auth()->user()->update([
+                'gender'=> $request->gender,
+                'birthdate'=> $request->birthdate,
+                'weight'=> $request->weight,
+                'height'=> $request->height,
+                'profile_completed'=> true,
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Profile Saved Successfully',
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
     public function getProfile()
     {
-        dd(auth()->user());
+        return response()->json([
+            'email' => auth()->user()->email,
+            'name' => auth()->user()->name,
+            'birthdate' => auth()->user()->birthdate ? auth()->user()->birthdate->format('Y-m-d') : null,
+            'gender' => auth()->user()->gender,
+            'weight' => auth()->user()->weight,
+            'height' => auth()->user()->height,
+            'profile_completed' => auth()->user()->profile_completed,
+        ]);
     }
 }
