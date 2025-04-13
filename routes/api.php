@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WorkoutController;
 use App\Http\Controllers\Api\PlanController;
+use App\Http\Controllers\Api\PredefinedWorkoutController;
 
 // Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
 //     return $request->user();
@@ -29,4 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/categories', [WorkoutController::class, 'categories']);     
 Route::get('/workouts', [WorkoutController::class, 'index']);           
-Route::get('/workouts/{id}', [WorkoutController::class, 'show']);       
+Route::get('/workouts/{id}', [WorkoutController::class, 'show']);
+
+// Predefined workouts (Beginner / Advanced)
+Route::get('/predefined-workouts', [PredefinedWorkoutController::class, 'index']);
+Route::get('/predefined-workouts/{id}', [PredefinedWorkoutController::class, 'show']);
