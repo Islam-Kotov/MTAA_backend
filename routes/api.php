@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WorkoutController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PredefinedWorkoutController;
+use App\Http\Controllers\Api\FriendController;
 
 // Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
 //     return $request->user();
@@ -28,6 +29,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/plan/remove/{workout_id}', [PlanController::class, 'removeFromPlan']);
 
     Route::post('reset-password', [UserController::class,'resetPassword']);
+
+    //Friends
+    Route::post('/friends/send', [FriendController::class, 'sendRequest']);         //  send
+    Route::post('/friends/accept/{id}', [FriendController::class, 'acceptRequest']); // accept
+    Route::post('/friends/decline/{id}', [FriendController::class, 'declineRequest']); // reject
+    Route::get('/friends', [FriendController::class, 'list']); // list of friends and requests
+    Route::delete('/friends/remove/{id}', [FriendController::class, 'removeFriend']); //delete
+
 });
 
 

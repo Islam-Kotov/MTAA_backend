@@ -69,4 +69,33 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
             ->withTimestamps();
     }
 
+    public function sentFriendRequests()
+    {
+        return $this->hasMany(Friend::class, 'user_id');
+    }
+
+    public function receivedFriendRequests()
+    {
+        return $this->hasMany(Friend::class, 'friend_id');
+    }
+
+    public function friends()
+    {
+        
+        $friendsFrom = Friend::where('friend_id', $this->id)
+            ->where('status', 'accepted')
+            ->with('sender:id,name,email')
+            ->get()
+            ->pluck('sender');
+    
+        
+        $friendsTo = Friend::where('user_id', $this->id)
+            ->where('status', 'accepted')
+            ->with('receiver:id,name,email')
+            ->get()
+            ->pluck('receiver');
+    
+        return $friendsFrom->merge($friendsTo);
+    }
+
 }
