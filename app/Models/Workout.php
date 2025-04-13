@@ -22,11 +22,20 @@ class Workout extends Model
     
     protected $appends = ['photo_url'];
 
-    
+
     public function getPhotoUrlAttribute()
     {
         return $this->exercise_photo
             ? asset('images/workouts/' . $this->exercise_photo)
             : null;
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_workout_plan')
+            ->withPivot(['repetitions', 'sets'])
+            ->withTimestamps();
+    }
+    
+
 }
