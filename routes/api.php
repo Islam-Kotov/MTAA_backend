@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/plan', [PlanController::class, 'getPlan']);
     Route::delete('/plan/remove/{workout_id}', [PlanController::class, 'removeFromPlan']);
 
+    Route::post('reset-password', [UserController::class,'resetPassword']);
 });
 
 
