@@ -9,9 +9,35 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @OA\Tag(
+ *     name="User",
+ *     description="Operations about user authentication and profile"
+ * )
+ */
+
 class UserController extends Controller
-{
+{   
     /**
+     * @OA\Post(
+     *     path="/api/auth/register",
+     *     tags={"User"},
+     *     summary="Register a new user",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "password_confirmation"},
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="secret123"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="secret123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="User registered"),
+     *     @OA\Response(response=401, description="Validation error"),
+     *     @OA\Response(response=500, description="Server error")
+     * )
+     *
      * Create User
      * @param Request $request
      * @return User 
@@ -56,6 +82,23 @@ class UserController extends Controller
     }
 
     /**
+     * @OA\Post(
+     *     path="/api/auth/login",
+     *     tags={"User"},
+     *     summary="Login user",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="secret123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Login success"),
+     *     @OA\Response(response=401, description="Invalid credentials"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     *
      * Login The User
      * @param Request $request
      * @return User
@@ -99,6 +142,29 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/reset-password",
+     *     tags={"User"},
+     *     summary="Reset user password",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "old_password", "new_password", "new_password_confirmation"},
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="old_password", type="string", example="oldpass"),
+     *             @OA\Property(property="new_password", type="string", example="newpass"),
+     *             @OA\Property(property="new_password_confirmation", type="string", example="newpass")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Password reset successful"),
+     *     @OA\Response(response=403, description="Invalid credentials"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
+
 
     public function resetPassword(Request $request)
     {
@@ -145,6 +211,27 @@ class UserController extends Controller
         }
     }
 
+
+    /**
+     * @OA\Post(
+     *     path="/api/profile",
+     *     tags={"User"},
+     *     summary="Save user profile data",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"gender", "birthdate", "weight", "height"},
+     *             @OA\Property(property="gender", type="string", example="male"),
+     *             @OA\Property(property="birthdate", type="string", format="date", example="1990-01-01"),
+     *             @OA\Property(property="weight", type="integer", example=70),
+     *             @OA\Property(property="height", type="integer", example=180)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Profile updated successfully"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
 
     public function saveProfile(Request $request)
     {
@@ -197,6 +284,17 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/delete",
+     *     tags={"User"},
+     *     summary="Delete user profile",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(response=200, description="Profile deleted"),
+     *     @OA\Response(response=500, description="Server error")
+     * )
+     */
+
     public function deleteProfile(Request $request)
     {
         try {
@@ -236,6 +334,17 @@ class UserController extends Controller
         }
     }
 
+    
+        /**
+     * @OA\Delete(
+     *     path="/api/logout",
+     *     tags={"User"},
+     *     summary="Logout user",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(response=200, description="User logged out")
+     * )
+     */
+
     public function logout()
     {
         try {
@@ -255,6 +364,16 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+        /**
+     * @OA\Get(
+     *     path="/api/profile",
+     *     tags={"User"},
+     *     summary="Get user profile",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(response=200, description="User profile data")
+     * )
+     */
 
     public function getProfile()
     {

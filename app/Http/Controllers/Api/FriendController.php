@@ -7,10 +7,30 @@ use Illuminate\Http\Request;
 use App\Models\Friend;
 use App\Models\User;
 
+/**
+ * @OA\Tag(
+ *     name="Friends",
+ *     description="Operations related to managing friends"
+ * )
+ */
 class FriendController extends Controller
 {
     /**
-     * send request
+     * @OA\Post(
+     *     path="/api/friends/send",
+     *     tags={"Friends"},
+     *     summary="Send a friend request",
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Friend request sent"),
+     *     @OA\Response(response=400, description="Invalid or duplicate request"),
+     * )
      */
     public function sendRequest(Request $request)
     {
@@ -44,7 +64,6 @@ class FriendController extends Controller
             }
 
             if ($existing->status === 'declined') {
-                
                 $existing->update([
                     'user_id' => $request->user()->id,
                     'friend_id' => $recipient->id,
@@ -64,9 +83,22 @@ class FriendController extends Controller
         return response()->json(['message' => 'Friend request sent']);
     }
 
-
     /**
-     * accept request
+     * @OA\Post(
+     *     path="/api/friends/accept/{id}",
+     *     tags={"Friends"},
+     *     summary="Accept a friend request",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the user who sent the request",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Friend request accepted"),
+     *     @OA\Response(response=404, description="Request not found")
+     * )
      */
     public function acceptRequest(Request $request, $id)
     {
@@ -85,7 +117,21 @@ class FriendController extends Controller
     }
 
     /**
-     * reject request
+     * @OA\Post(
+     *     path="/api/friends/decline/{id}",
+     *     tags={"Friends"},
+     *     summary="Decline a friend request",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the user who sent the request",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Friend request declined"),
+     *     @OA\Response(response=404, description="Request not found")
+     * )
      */
     public function declineRequest(Request $request, $id)
     {
@@ -104,12 +150,18 @@ class FriendController extends Controller
     }
 
     /**
-     * get friends list , pending , and sent requests for frienship
+     * @OA\Get(
+     *     path="/api/friends",
+     *     tags={"Friends"},
+     *     summary="List friends and friend requests",
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(response=200, description="List of friends and requests")
+     * )
      */
     public function list(Request $request)
     {
         $user = $request->user();
-    
+
         return response()->json([
             'friends' => $user->friends(),
             'incoming_requests' => $user->receivedFriendRequests()
@@ -125,8 +177,22 @@ class FriendController extends Controller
         ]);
     }
 
-        /**
-     * Remove a friend
+    /**
+     * @OA\Delete(
+     *     path="/api/friends/remove/{id}",
+     *     tags={"Friends"},
+     *     summary="Remove a friend",
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the friend to remove",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Friend removed"),
+     *     @OA\Response(response=404, description="Friend not found")
+     * )
      */
     public function removeFriend(Request $request, $id)
     {
@@ -144,6 +210,4 @@ class FriendController extends Controller
             return response()->json(['message' => 'Friend not found'], 404);
         }
     }
-
-    
 }

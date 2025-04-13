@@ -7,11 +7,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Workout;
 
+/**
+ * @OA\Tag(
+ *     name="Workout Plan",
+ *     description="Manage user workout plans"
+ * )
+ */
+
 class PlanController extends Controller
 {   
+
     /**
-     * add exercise into user's plan
+     * @OA\Post(
+     *     path="/api/plan/add",
+     *     summary="Add a workout to user's plan",
+     *     tags={"Workout Plan"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"workout_id", "repetitions", "sets"},
+     *             @OA\Property(property="workout_id", type="integer", example=1),
+     *             @OA\Property(property="repetitions", type="integer", example=10),
+     *             @OA\Property(property="sets", type="integer", example=3)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Workout added to your plan"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
+
     public function addToPlan(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -44,7 +69,24 @@ class PlanController extends Controller
 
 
     /**
-     * update repetitions and sets for an exercise in user's plan
+     * @OA\Put(
+     *     path="/api/plan/update",
+     *     summary="Update repetitions and sets in the user's plan",
+     *     tags={"Workout Plan"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"workout_id", "repetitions", "sets"},
+     *             @OA\Property(property="workout_id", type="integer", example=1),
+     *             @OA\Property(property="repetitions", type="integer", example=12),
+     *             @OA\Property(property="sets", type="integer", example=4)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Workout plan updated successfully"),
+     *     @OA\Response(response=404, description="Workout not found in plan"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function updatePlanItem(Request $request)
     {
@@ -89,9 +131,14 @@ class PlanController extends Controller
     }
 
 
-
     /**
-     * get user's plan
+     * @OA\Get(
+     *     path="/api/plan",
+     *     summary="Get user's workout plan",
+     *     tags={"Workout Plan"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(response=200, description="List of workouts in user's plan")
+     * )
      */
     public function getPlan(Request $request)
     {
@@ -112,7 +159,21 @@ class PlanController extends Controller
     }
 
     /**
-     * delete from the plan
+     * @OA\Delete(
+     *     path="/api/plan/remove/{workout_id}",
+     *     summary="Remove workout from user's plan",
+     *     tags={"Workout Plan"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="workout_id",
+     *         in="path",
+     *         required=true,
+     *         description="Workout ID to remove",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Workout removed from plan"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function removeFromPlan(Request $request, $workout_id)
     {

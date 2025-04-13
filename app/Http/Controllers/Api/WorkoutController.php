@@ -6,10 +6,29 @@ use App\Http\Controllers\Controller;
 use App\Models\Workout;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Workouts",
+ *     description="Endpoints for accessing workout categories and exercises"
+ * )
+ */
+
 class WorkoutController extends Controller
 {
     /**
-     * categories
+     * @OA\Get(
+     *     path="/api/categories",
+     *     tags={"Workouts"},
+     *     summary="Get all unique workout categories",
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of exercise categories",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(type="string", example="Cardio")
+     *         )
+     *     )
+     * )
      */
     public function categories()
     {
@@ -21,7 +40,31 @@ class WorkoutController extends Controller
     }
 
     /**
-     * list of exercises according to category
+     * @OA\Get(
+     *     path="/api/workouts",
+     *     tags={"Workouts"},
+     *     summary="Get list of exercises (optionally filtered by category)",
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         description="Filter exercises by category",
+     *         required=false,
+     *         @OA\Schema(type="string", example="Strength")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of exercises",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="exercise_name", type="string", example="Push-Up"),
+     *                 @OA\Property(property="exercise_type", type="string", example="Strength"),
+     *                 @OA\Property(property="exercise_photo", type="string", example="http://localhost/storage/images/pushup.jpg")
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index(Request $request)
     {
@@ -49,7 +92,30 @@ class WorkoutController extends Controller
     }
 
     /**
-     * exact exercise
+     * @OA\Get(
+     *     path="/api/workouts/{id}",
+     *     tags={"Workouts"},
+     *     summary="Get detailed information about a specific exercise",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the workout/exercise",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Exercise details",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="exercise_name", type="string", example="Push-Up"),
+     *             @OA\Property(property="main_muscles", type="string", example="Chest, Triceps"),
+     *             @OA\Property(property="equipment_req", type="string", example="None"),
+     *             @OA\Property(property="execution_guide", type="string", example="Keep your body straight..."),
+     *             @OA\Property(property="exercise_photo", type="string", example="http://localhost/storage/images/pushup.jpg")
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Exercise not found")
+     * )
      */
     public function show($id)
     {

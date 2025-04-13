@@ -1,0 +1,934 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "MTAA Fitness API",
+        "description": "API for user registration, login, workouts, friends and plans.",
+        "contact": {
+            "email": "support@fitness-app.test"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/api/friends/send": {
+            "post": {
+                "tags": [
+                    "Friends"
+                ],
+                "summary": "Send a friend request",
+                "operationId": "547cccb178e04a35d1a076dd2a0ffb14",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Friend request sent"
+                    },
+                    "400": {
+                        "description": "Invalid or duplicate request"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/friends/accept/{id}": {
+            "post": {
+                "tags": [
+                    "Friends"
+                ],
+                "summary": "Accept a friend request",
+                "operationId": "ac3106c9f607080db984184d1da9778b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user who sent the request",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Friend request accepted"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/friends/decline/{id}": {
+            "post": {
+                "tags": [
+                    "Friends"
+                ],
+                "summary": "Decline a friend request",
+                "operationId": "1613224f692fe2c8cba1d475edcbfa4e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the user who sent the request",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Friend request declined"
+                    },
+                    "404": {
+                        "description": "Request not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/friends": {
+            "get": {
+                "tags": [
+                    "Friends"
+                ],
+                "summary": "List friends and friend requests",
+                "operationId": "6aa592eb2ff8dbc86578ea9e57a6ab24",
+                "responses": {
+                    "200": {
+                        "description": "List of friends and requests"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/friends/remove/{id}": {
+            "delete": {
+                "tags": [
+                    "Friends"
+                ],
+                "summary": "Remove a friend",
+                "operationId": "aec7386cf969136c23ffd9ba34832f3d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the friend to remove",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Friend removed"
+                    },
+                    "404": {
+                        "description": "Friend not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/plan/add": {
+            "post": {
+                "tags": [
+                    "Workout Plan"
+                ],
+                "summary": "Add a workout to user's plan",
+                "operationId": "274ade3127198acfffe2b90c3d5b9f72",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "workout_id",
+                                    "repetitions",
+                                    "sets"
+                                ],
+                                "properties": {
+                                    "workout_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "repetitions": {
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "sets": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Workout added to your plan"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/plan/update": {
+            "put": {
+                "tags": [
+                    "Workout Plan"
+                ],
+                "summary": "Update repetitions and sets in the user's plan",
+                "operationId": "4552c2f208c37548e8de3fd830731633",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "workout_id",
+                                    "repetitions",
+                                    "sets"
+                                ],
+                                "properties": {
+                                    "workout_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "repetitions": {
+                                        "type": "integer",
+                                        "example": 12
+                                    },
+                                    "sets": {
+                                        "type": "integer",
+                                        "example": 4
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Workout plan updated successfully"
+                    },
+                    "404": {
+                        "description": "Workout not found in plan"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/plan": {
+            "get": {
+                "tags": [
+                    "Workout Plan"
+                ],
+                "summary": "Get user's workout plan",
+                "operationId": "6a7bfe079f4f3128195ed3b199f5db3d",
+                "responses": {
+                    "200": {
+                        "description": "List of workouts in user's plan"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/plan/remove/{workout_id}": {
+            "delete": {
+                "tags": [
+                    "Workout Plan"
+                ],
+                "summary": "Remove workout from user's plan",
+                "operationId": "8037af73aa3dec9bbea3b115b01e36d8",
+                "parameters": [
+                    {
+                        "name": "workout_id",
+                        "in": "path",
+                        "description": "Workout ID to remove",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Workout removed from plan"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/predefined-workouts": {
+            "get": {
+                "tags": [
+                    "Predefined Workouts"
+                ],
+                "summary": "Get list of predefined workouts by level",
+                "operationId": "ee16cf33fbb64bc60e0d69846a15a702",
+                "parameters": [
+                    {
+                        "name": "level",
+                        "in": "query",
+                        "description": "Level of the workout (beginner or advanced)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "beginner",
+                                "advanced"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of workouts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "Full Body Beginner Workout"
+                                            },
+                                            "image": {
+                                                "type": "string",
+                                                "example": "http://localhost/images/predefined/workout.jpg"
+                                            },
+                                            "duration": {
+                                                "type": "integer",
+                                                "example": 30
+                                            },
+                                            "calories": {
+                                                "type": "integer",
+                                                "example": 200
+                                            },
+                                            "exercise_count": {
+                                                "type": "integer",
+                                                "example": 5
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid level"
+                    }
+                }
+            }
+        },
+        "/api/predefined-workouts/{id}": {
+            "get": {
+                "tags": [
+                    "Predefined Workouts"
+                ],
+                "summary": "Get detailed info about a predefined workout",
+                "operationId": "ed6ef4fca548fa5fe2dc93b63a4e0bfd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the predefined workout",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Workout details with exercises",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Full Body Beginner Workout"
+                                        },
+                                        "focus": {
+                                            "type": "string",
+                                            "example": "Full Body"
+                                        },
+                                        "duration": {
+                                            "type": "integer",
+                                            "example": 30
+                                        },
+                                        "calories": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "sets_reps": {
+                                            "type": "string",
+                                            "example": "3 sets of 10 reps"
+                                        },
+                                        "rest": {
+                                            "type": "string",
+                                            "example": "30 seconds"
+                                        },
+                                        "benefits": {
+                                            "type": "string",
+                                            "example": "Improves endurance and strength"
+                                        },
+                                        "image": {
+                                            "type": "string",
+                                            "example": "http://localhost/images/predefined/workout.jpg"
+                                        },
+                                        "exercises": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Push-Ups"
+                                                    },
+                                                    "reps_sets": {
+                                                        "type": "string",
+                                                        "example": "3 x 10"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Keep your back straight..."
+                                                    },
+                                                    "image": {
+                                                        "type": "string",
+                                                        "example": "http://localhost/images/predefined/exercises/pushups.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Workout not found"
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Register a new user",
+                "operationId": "6e78f3cf2fc8947f5418f1d14849a151",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User registered"
+                    },
+                    "401": {
+                        "description": "Validation error"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Login user",
+                "operationId": "b9af18be56384e6dd7e58525ca77c038",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login success"
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Reset user password",
+                "operationId": "16b8d02b6cff6332dbf8f7e4ec10d952",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "old_password",
+                                    "new_password",
+                                    "new_password_confirmation"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "old_password": {
+                                        "type": "string",
+                                        "example": "oldpass"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "example": "newpass"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "example": "newpass"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successful"
+                    },
+                    "403": {
+                        "description": "Invalid credentials"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/profile": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user profile",
+                "operationId": "bfb03a84f310d23175d8617741ebf78c",
+                "responses": {
+                    "200": {
+                        "description": "User profile data"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Save user profile data",
+                "operationId": "211153f0b3b2d83602daad7c9c312fa9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "gender",
+                                    "birthdate",
+                                    "weight",
+                                    "height"
+                                ],
+                                "properties": {
+                                    "gender": {
+                                        "type": "string",
+                                        "example": "male"
+                                    },
+                                    "birthdate": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1990-01-01"
+                                    },
+                                    "weight": {
+                                        "type": "integer",
+                                        "example": 70
+                                    },
+                                    "height": {
+                                        "type": "integer",
+                                        "example": 180
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile updated successfully"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/delete": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete user profile",
+                "operationId": "535bdf6e3c95b2eb5ffdbef8b8ac6e27",
+                "responses": {
+                    "200": {
+                        "description": "Profile deleted"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/logout": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Logout user",
+                "operationId": "7515a26a23677a36248e78d2eb717a01",
+                "responses": {
+                    "200": {
+                        "description": "User logged out"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Get all unique workout categories",
+                "operationId": "55b69176596c04d74796971c30fb5d2a",
+                "responses": {
+                    "200": {
+                        "description": "List of exercise categories",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string",
+                                        "example": "Cardio"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/workouts": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Get list of exercises (optionally filtered by category)",
+                "operationId": "0d949ad146e8fdb6a4eab0308be812b7",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Filter exercises by category",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Strength"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of exercises",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "exercise_name": {
+                                                "type": "string",
+                                                "example": "Push-Up"
+                                            },
+                                            "exercise_type": {
+                                                "type": "string",
+                                                "example": "Strength"
+                                            },
+                                            "exercise_photo": {
+                                                "type": "string",
+                                                "example": "http://localhost/storage/images/pushup.jpg"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/workouts/{id}": {
+            "get": {
+                "tags": [
+                    "Workouts"
+                ],
+                "summary": "Get detailed information about a specific exercise",
+                "operationId": "e17d8de1e05f71253d2f09937087f992",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the workout/exercise",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Exercise details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "exercise_name": {
+                                            "type": "string",
+                                            "example": "Push-Up"
+                                        },
+                                        "main_muscles": {
+                                            "type": "string",
+                                            "example": "Chest, Triceps"
+                                        },
+                                        "equipment_req": {
+                                            "type": "string",
+                                            "example": "None"
+                                        },
+                                        "execution_guide": {
+                                            "type": "string",
+                                            "example": "Keep your body straight..."
+                                        },
+                                        "exercise_photo": {
+                                            "type": "string",
+                                            "example": "http://localhost/storage/images/pushup.jpg"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Exercise not found"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Friends",
+            "description": "Operations related to managing friends"
+        },
+        {
+            "name": "Workout Plan",
+            "description": "Manage user workout plans"
+        },
+        {
+            "name": "Predefined Workouts",
+            "description": "Browse and view predefined workouts by level"
+        },
+        {
+            "name": "User",
+            "description": "Operations about user authentication and profile"
+        },
+        {
+            "name": "Workouts",
+            "description": "Endpoints for accessing workout categories and exercises"
+        }
+    ]
+}
