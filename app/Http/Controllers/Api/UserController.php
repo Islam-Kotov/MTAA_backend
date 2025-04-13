@@ -24,7 +24,7 @@ class UserController extends Controller
             [
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required'
+                'password' => 'required|confirmed'
             ]);
 
             if($validateUser->fails()){
@@ -99,6 +99,52 @@ class UserController extends Controller
             ], 500);
         }
     }
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validatePassword = Validator::make($request->all(),
+            [
+                'email' => 'required|email',
+                'old_password' => 'required',
+                'new_password' => 'required|confirmed'
+            ]);
+
+            if($validatePassword->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validatePassword->errors()
+                ], 422);
+            }
+
+            $user = Auth::user();
+
+            if ($user->email !== $request->email) {
+                return response()->json(['message' => 'Invalid email.'], 403);
+            }
+        
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json(['message' => 'Current password is incorrect.'], 403);
+            }
+
+            $user->update([
+                'password'=> Hash::make($request->new_password),
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Password Reset Successfully',
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function saveProfile(Request $request)
     {

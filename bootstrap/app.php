@@ -12,7 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->trustHosts(function ($request) {
+            return [
+                'localhost',       // Trust requests coming from localhost
+                '127.0.0.1',       // Trust requests from local IP address
+                '192.168.1.245',     // Trust requests coming from this device
+            ];
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
