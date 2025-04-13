@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('delete', [UserController::class,'deleteProfile']);
 
     Route::post('/plan/add', [PlanController::class, 'addToPlan']);
-    Route::post('/plan/update', [PlanController::class, 'updatePlanItem']);
+    Route::put('/plan/update', [PlanController::class, 'updatePlanItem']);
     Route::get('/plan', [PlanController::class, 'getPlan']);
     Route::delete('/plan/remove/{workout_id}', [PlanController::class, 'removeFromPlan']);
 
