@@ -236,6 +236,26 @@ class UserController extends Controller
         }
     }
 
+    public function logout()
+    {
+        try {
+            $user = auth()->user();
+
+            $user->tokens()->delete();
+
+            return response()->json([
+                'status'=> true,
+                'message'=> 'User Logout Successful'
+            ],200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
     public function getProfile()
     {
         return response()->json([
