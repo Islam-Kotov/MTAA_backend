@@ -61,4 +61,12 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
             ? asset('storage/' . $this->photo_path)
             : null;
     }
+
+    public function workoutPlan()
+    {
+        return $this->belongsToMany(Workout::class, 'user_workout_plan')
+            ->withPivot(['repetitions', 'sets'])
+            ->withTimestamps();
+    }
+
 }
