@@ -24,12 +24,35 @@ class FriendController extends Controller
             return response()->json(['message' => 'You cannot add yourself'], 400);
         }
 
-        $alreadySent = Friend::where('user_id', $request->user()->id)
-            ->where('friend_id', $recipient->id)
+        $existing = Friend::where(function ($q) use ($request, $recipient) {
+                $q->where('user_id', $request->user()->id)
+                  ->where('friend_id', $recipient->id);
+            })
+            ->orWhere(function ($q) use ($request, $recipient) {
+                $q->where('user_id', $recipient->id)
+                  ->where('friend_id', $request->user()->id);
+            })
             ->first();
 
-        if ($alreadySent) {
-            return response()->json(['message' => 'Request already sent or exists'], 400);
+        if ($existing) {
+            if ($existing->status === 'pending') {
+                return response()->json(['message' => 'Friend request already pending'], 400);
+            }
+
+            if ($existing->status === 'accepted') {
+                return response()->json(['message' => 'You are already friends'], 400);
+            }
+
+            if ($existing->status === 'declined') {
+                
+                $existing->update([
+                    'user_id' => $request->user()->id,
+                    'friend_id' => $recipient->id,
+                    'status' => 'pending',
+                ]);
+
+                return response()->json(['message' => 'Friend request re-sent']);
+            }
         }
 
         Friend::create([
@@ -40,6 +63,7 @@ class FriendController extends Controller
 
         return response()->json(['message' => 'Friend request sent']);
     }
+
 
     /**
      * accept request
