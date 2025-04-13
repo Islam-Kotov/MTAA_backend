@@ -219,6 +219,8 @@ class UserController extends Controller
             //     return response()->json(['message' => 'Incorrect password.'], 403);
             // }
 
+            $user->workoutPlan()->delete();
+            $user->tokens()->delete();
             $user->delete();
 
             return response()->json([
