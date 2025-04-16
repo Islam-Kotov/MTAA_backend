@@ -178,7 +178,7 @@ class PlanController extends Controller
     public function removeFromPlan(Request $request, $workout_id)
     {
         $validator = Validator::make(['workout_id' => $workout_id], [
-            'workout_id' => 'required|exists:workouts,id',
+            'workout_id' => 'required|exists:workouts,id|exists:user_workout_plan,workout_id',
         ]);
     
         if ($validator->fails()) {

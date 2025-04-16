@@ -47,7 +47,7 @@ class PredefinedWorkoutController extends Controller
      */
     public function index(Request $request)
     {
-        $level = strtolower($request->query('level')); // Приводим к нижнему регистру
+        $level = strtolower($request->query('level')); // Transform to lower case
     
         if (!in_array($level, ['beginner', 'advanced'])) {
             return response()->json(['message' => 'Invalid level'], 422);
