@@ -264,10 +264,12 @@ class UserController extends Controller
             if ($request->hasFile('photo')) {
                 $file = $request->file('photo');
                 $filename = 'avatar_' . auth()->user()->id . '.' . $file->getClientOriginalExtension();
+
+                $avatarFolder = 'avatars/';
                 
-                $path = $file->storeAs('avatars', $filename, 'public');
-                
-                auth()->user()->photo_path = $path;
+                $file->storeAs('users/' . auth()->user()->id . '/' . $avatarFolder, $filename, 'private');
+
+                auth()->user()->photo_path = $avatarFolder . $filename;
                 auth()->user()->save();
             }
 

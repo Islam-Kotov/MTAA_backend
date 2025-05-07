@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\WorkoutController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PredefinedWorkoutController;
 use App\Http\Controllers\Api\FriendController;
+use App\Http\Controllers\Api\MediaController;
 
 // Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
 //     return $request->user();
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/plan/remove/{workout_id}', [PlanController::class, 'removeFromPlan']);
 
     Route::post('reset-password', [UserController::class,'resetPassword']);
+    
+    Route::get('media/{filepath}', [MediaController::class,'showPrivate'])->name('media.private')->where('filepath', '.*');
 
     //Friends
     Route::post('/friends/send', [FriendController::class, 'sendRequest']);         //  send

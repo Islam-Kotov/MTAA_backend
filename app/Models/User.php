@@ -58,7 +58,7 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
     public function getPhotoUrlAttribute()
     {
         return $this->photo_path
-            ? asset('storage/' . $this->photo_path)
+            ? route('media.private', ['filepath' => auth()->user()->photo_path])
             : null;
     }
 
