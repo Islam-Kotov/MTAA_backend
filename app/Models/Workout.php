@@ -19,16 +19,6 @@ class Workout extends Model
         'exercise_photo',
     ];
 
-    
-    protected $appends = ['photo_url'];
-
-
-    public function getPhotoUrlAttribute()
-    {
-        return $this->exercise_photo
-            ? asset('images/workouts/' . $this->exercise_photo)
-            : null;
-    }
 
     public function users()
     {
@@ -36,6 +26,4 @@ class Workout extends Model
             ->withPivot(['repetitions', 'sets'])
             ->withTimestamps();
     }
-    
-
 }

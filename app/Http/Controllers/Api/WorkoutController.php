@@ -34,10 +34,18 @@ class WorkoutController extends Controller
     {
         $categories = Workout::select('exercise_category')
             ->distinct()
-            ->pluck('exercise_category');
+            ->get()
+            ->map(function ($item, $index) {
+                return [
+                    'id' => $index + 1,
+                    'name' => $item->exercise_category
+                ];
+            })
+            ->values();
 
         return response()->json($categories);
     }
+
 
     /**
      * @OA\Get(
@@ -81,15 +89,20 @@ class WorkoutController extends Controller
             'exercise_photo',
         ]);
 
-        $workouts->transform(function ($item) {
-            $item->exercise_photo = $item->exercise_photo
-                ? asset($item->exercise_photo)
-                : null;
+        $baseUrl = 'http://10.0.2.2:8000';
+
+        $workouts->transform(function ($item) use ($baseUrl) {
+            if ($item->exercise_photo) {
+                $item->exercise_photo = $baseUrl . '/storage/' . ltrim($item->exercise_photo, '/');
+            } else {
+                $item->exercise_photo = null;
+            }
             return $item;
         });
 
         return response()->json($workouts);
     }
+
 
     /**
      * @OA\Get(
@@ -125,14 +138,17 @@ class WorkoutController extends Controller
             return response()->json(['message' => 'Exercise not found'], 404);
         }
 
+        $baseUrl = 'http://10.0.2.2:8000';
+
         return response()->json([
             'exercise_name' => $workout->exercise_name,
             'main_muscles' => $workout->main_muscles,
             'equipment_req' => $workout->equipment_req,
             'execution_guide' => $workout->execution_guide,
             'exercise_photo' => $workout->exercise_photo
-                ? asset($workout->exercise_photo)
+                ? $baseUrl . '/storage/' . ltrim($workout->exercise_photo, '/')
                 : null,
         ]);
     }
+
 }

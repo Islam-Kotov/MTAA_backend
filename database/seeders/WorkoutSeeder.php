@@ -16,7 +16,7 @@ class WorkoutSeeder extends Seeder
             'main_muscles' => 'Biceps',
             'equipment_req' => 'EZ Barbell',
             'execution_guide' => 'Stand with your feet shoulder-width apart...',
-            'exercise_photo' => 'avatar/barbell-curl.png',
+            'exercise_photo' => 'avatars/barbell-curl.png',
         ]);
 
         Workout::create([
@@ -26,7 +26,7 @@ class WorkoutSeeder extends Seeder
             'main_muscles' => 'Chest',
             'equipment_req' => 'Barbell',
             'execution_guide' => 'Lie on the bench. Lower the bar slowly...',
-            'exercise_photo' => 'avatar/bench-press.png',
+            'exercise_photo' => 'avatars/bench-press.png',
         ]);
 
         Workout::create([
@@ -36,7 +36,7 @@ class WorkoutSeeder extends Seeder
             'main_muscles' => 'Full Body',
             'equipment_req' => 'None',
             'execution_guide' => 'Jump while spreading legs and raising arms...',
-            'exercise_photo' => 'avatar/jumping-jacks.png',
+            'exercise_photo' => 'avatars/jumping-jacks.png',
         ]);
     }
 }
