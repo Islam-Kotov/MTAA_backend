@@ -47,24 +47,29 @@ class PredefinedWorkoutController extends Controller
      */
     public function index(Request $request)
     {
-        $level = strtolower($request->query('level')); // Transform to lower case
-    
+        $level = strtolower($request->query('level'));
+
         if (!in_array($level, ['beginner', 'advanced'])) {
             return response()->json(['message' => 'Invalid level'], 422);
         }
-    
+
         $workouts = PredefinedWorkout::where('level', $level)
             ->select('id', 'title', 'image', 'duration', 'calories', 'exercise_count')
-            ->get()
-            ->map(function ($workout) {
-                $workout->image = $workout->image 
-                    ? asset('images/predefined/' . $workout->image) 
-                    : null;
-                return $workout;
-            });
-    
+            ->get();
+
+        $baseUrl = 'http://192.168.1.36:8000';
+
+        $workouts->transform(function ($workout) use ($baseUrl) {
+            $workout->image = $workout->image
+                ? $baseUrl . '/storage/' . ltrim($workout->image, '/')
+                : null;
+            return $workout;
+        });
+
         return response()->json($workouts);
     }
+
+
 
     /**
      * @OA\Get(
@@ -113,6 +118,8 @@ class PredefinedWorkoutController extends Controller
             return response()->json(['message' => 'Workout not found'], 404);
         }
 
+        $baseUrl = 'http://192.168.1.36:8000';
+
         return response()->json([
             'title' => $workout->title,
             'focus' => $workout->focus,
@@ -121,17 +128,21 @@ class PredefinedWorkoutController extends Controller
             'sets_reps' => $workout->sets_reps,
             'rest' => $workout->rest,
             'benefits' => $workout->benefits,
-            'image' => $workout->image ? asset('images/predefined/' . $workout->image) : null,
-            'exercises' => $workout->exercises->map(function ($exercise) {
+            'image' => $workout->image
+                ? $baseUrl . '/storage/' . ltrim($workout->image, '/')
+                : null,
+            'exercises' => $workout->exercises->map(function ($exercise) use ($baseUrl) {
                 return [
                     'name' => $exercise->title,
                     'reps_sets' => $exercise->reps_sets,
                     'description' => $exercise->guide,
-                    'image' => $exercise->image 
-                        ? asset('images/predefined/exercises/' . $exercise->image) 
+                    'image' => $exercise->image
+                        ? $baseUrl . '/storage/' . ltrim($exercise->image, '/')
                         : null,
                 ];
-            })
+            }),
         ]);
     }
+
+
 }
