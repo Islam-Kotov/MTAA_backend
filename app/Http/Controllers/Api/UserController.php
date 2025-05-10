@@ -300,24 +300,24 @@ class UserController extends Controller
     public function deleteProfile(Request $request)
     {
         try {
-            // $validate = Validator::make($request->all(), 
-            // [
-            //     'password' => 'required'
-            // ]);
+            $validate = Validator::make($request->all(), 
+            [
+                'password' => 'required'
+            ]);
 
-            // if($validate->fails()){
-            //     return response()->json([
-            //         'status' => false,
-            //         'message' => 'validation error',
-            //         'errors' => $validate->errors()
-            //     ], 422);
-            // }
+            if($validate->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validate->errors()
+                ], 422);
+            }
 
             $user = Auth::user();
 
-            // if (!Hash::check($request->password, $user->password)) {
-            //     return response()->json(['message' => 'Incorrect password.'], 403);
-            // }
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json(['message' => 'Incorrect password.'], 403);
+            }
 
             // $user->workoutPlan()->delete();
             $user->tokens()->delete();
