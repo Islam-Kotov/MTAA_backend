@@ -21,6 +21,7 @@ Route::post('/auth/login', [UserController::class, 'loginUser']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('profile', [UserController::class,'getProfile']);
     Route::post('profile', [UserController::class,'saveProfile']);
+    Route::post('profile-photo', [UserController::class,'saveProfilePhoto']);
     Route::delete('logout', [UserController::class,'logout']);
     Route::delete('delete', [UserController::class,'deleteProfile']);
 

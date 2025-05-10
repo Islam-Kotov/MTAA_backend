@@ -286,6 +286,45 @@ class UserController extends Controller
         }
     }
 
+    public function saveProfilePhoto(Request $request)
+    {
+        try {
+            $validate = Validator::make($request->all(), 
+            [
+                'photo'=> 'required|file|max:5120',
+            ]);
+
+            if($validate->fails()){
+                return response()->json([
+                    'status' => false,
+                    'message' => 'validation error',
+                    'errors' => $validate->errors()
+                ], 422);
+            }
+
+            $file = $request->file('photo');
+            $filename = 'avatar_' . auth()->user()->id . '.' . $file->getClientOriginalExtension();
+
+            $avatarFolder = 'avatars/';
+            
+            $file->storeAs('users/' . auth()->user()->id . '/' . $avatarFolder, $filename, 'private');
+
+            auth()->user()->photo_path = $avatarFolder . $filename;
+            auth()->user()->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'User Profile Photo Saved Successfully',
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
     /**
      * @OA\Delete(
      *     path="/api/delete",
