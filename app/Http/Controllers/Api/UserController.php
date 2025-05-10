@@ -173,7 +173,7 @@ class UserController extends Controller
             [
                 'email' => 'required|email',
                 'old_password' => 'required',
-                'new_password' => 'required|confirmed'
+                'new_password' => 'required'
             ]);
 
             if($validatePassword->fails()){
