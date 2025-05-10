@@ -46,28 +46,25 @@ class PredefinedWorkoutController extends Controller
      * )
      */
     public function index(Request $request)
-    {
-        $level = strtolower($request->query('level'));
+        {
+            $level = strtolower($request->query('level'));
 
-        if (!in_array($level, ['beginner', 'advanced'])) {
-            return response()->json(['message' => 'Invalid level'], 422);
+            if (!in_array($level, ['beginner', 'advanced'])) {
+                return response()->json(['message' => 'Invalid level'], 422);
+            }
+
+            $workouts = PredefinedWorkout::where('level', $level)
+                ->select('id', 'title', 'image', 'duration', 'calories', 'exercise_count')
+                ->get();
+
+            // Не используем изображение, оставляем null (или подставьте Flutter-иконку на стороне клиента)
+            $workouts->transform(function ($workout) {
+                $workout->image = null;
+                return $workout;
+            });
+
+            return response()->json($workouts);
         }
-
-        $workouts = PredefinedWorkout::where('level', $level)
-            ->select('id', 'title', 'image', 'duration', 'calories', 'exercise_count')
-            ->get();
-
-        $baseUrl = 'http://192.168.1.36:8000';
-
-        $workouts->transform(function ($workout) use ($baseUrl) {
-            $workout->image = $workout->image
-                ? $baseUrl . '/storage/' . ltrim($workout->image, '/')
-                : null;
-            return $workout;
-        });
-
-        return response()->json($workouts);
-    }
 
 
 
@@ -110,39 +107,38 @@ class PredefinedWorkoutController extends Controller
      *     @OA\Response(response=404, description="Workout not found")
      * )
      */
-    public function show($id)
-    {
-        $workout = PredefinedWorkout::with('exercises')->find($id);
+        public function show($id)
+        {
+            $workout = PredefinedWorkout::with('exercises')->find($id);
 
-        if (!$workout) {
-            return response()->json(['message' => 'Workout not found'], 404);
+            if (!$workout) {
+                return response()->json(['message' => 'Workout not found'], 404);
+            }
+
+            $baseUrl = 'http://192.168.1.36:8000';
+
+            return response()->json([
+                'title' => $workout->title,
+                'focus' => $workout->focus,
+                'duration' => $workout->duration,
+                'calories' => $workout->calories,
+                'sets_reps' => $workout->sets_reps,
+                'rest' => $workout->rest,
+                'benefits' => $workout->benefits,
+                'image' => null, // Не используем изображения для тренировок
+                'exercises' => $workout->exercises->map(function ($exercise) use ($baseUrl) {
+                    $filename = basename($exercise->image ?? '');
+                    return [
+                        'name' => $exercise->title,
+                        'reps_sets' => $exercise->reps_sets,
+                        'description' => $exercise->guide,
+                        'image' => $filename
+                            ? $baseUrl . '/storage/avatars/' . $filename
+                            : null,
+                    ];
+                }),
+            ]);
         }
-
-        $baseUrl = 'http://192.168.1.36:8000';
-
-        return response()->json([
-            'title' => $workout->title,
-            'focus' => $workout->focus,
-            'duration' => $workout->duration,
-            'calories' => $workout->calories,
-            'sets_reps' => $workout->sets_reps,
-            'rest' => $workout->rest,
-            'benefits' => $workout->benefits,
-            'image' => $workout->image
-                ? $baseUrl . '/storage/' . ltrim($workout->image, '/')
-                : null,
-            'exercises' => $workout->exercises->map(function ($exercise) use ($baseUrl) {
-                return [
-                    'name' => $exercise->title,
-                    'reps_sets' => $exercise->reps_sets,
-                    'description' => $exercise->guide,
-                    'image' => $exercise->image
-                        ? $baseUrl . '/storage/' . ltrim($exercise->image, '/')
-                        : null,
-                ];
-            }),
-        ]);
-    }
 
 
 }
