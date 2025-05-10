@@ -238,7 +238,7 @@ class UserController extends Controller
         try {
             $validate = Validator::make($request->all(), 
             [
-                'gender' => 'required',
+                // 'gender' => 'required',
                 'birthdate' => 'required',
                 'weight'=> 'required',
                 'height'=> 'required',
@@ -254,7 +254,7 @@ class UserController extends Controller
             }
             
             auth()->user()->update([
-                'gender'=> $request->gender,
+                // 'gender'=> $request->gender,
                 'birthdate'=> $request->birthdate,
                 'weight'=> $request->weight,
                 'height'=> $request->height,
