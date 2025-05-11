@@ -12,13 +12,6 @@ use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\MediaController;
 
 
-Route::get('/testWebSocket', function (Request $request) {
-    broadcast(new MessageSentEvent('asdfasfas'));
-
-    return 'ok';
-});
-
-
 Route::post('/auth/register', [UserController::class, 'createUser']);
 Route::post('/auth/login', [UserController::class, 'loginUser']);
 
@@ -45,6 +38,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/friends', [FriendController::class, 'list']); // list of friends and requests
     Route::delete('/friends/remove/{id}', [FriendController::class, 'removeFriend']); //delete
 
+    Route::get('/sayHello', function (Request $request) {
+        broadcast(new MessageSentEvent('Hello!'));
+
+        return 'ok';
+    });
 });
 
 
