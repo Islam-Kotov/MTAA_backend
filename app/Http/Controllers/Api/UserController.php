@@ -238,7 +238,7 @@ class UserController extends Controller
         try {
             $validate = Validator::make($request->all(), 
             [
-                // 'gender' => 'required',
+                'gender' => 'sometimes',
                 'birthdate' => 'required',
                 'weight'=> 'required',
                 'height'=> 'required',
@@ -254,12 +254,17 @@ class UserController extends Controller
             }
             
             auth()->user()->update([
-                // 'gender'=> $request->gender,
                 'birthdate'=> $request->birthdate,
                 'weight'=> $request->weight,
                 'height'=> $request->height,
                 'profile_completed'=> true,
             ]);
+
+            if ($request->has('gender')) {
+                auth()->user()->update([
+                    'gender'=> $request->gender,
+                ]);
+            }
 
             if ($request->hasFile('photo')) {
                 $file = $request->file('photo');
