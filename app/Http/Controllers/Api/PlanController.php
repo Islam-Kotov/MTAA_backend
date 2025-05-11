@@ -140,23 +140,24 @@ class PlanController extends Controller
      *     @OA\Response(response=200, description="List of workouts in user's plan")
      * )
      */
-    public function getPlan(Request $request)
-    {
-        $plan = $request->user()->workoutPlan()->get()->map(function ($workout) {
-            return [
-                'id' => $workout->id,
-                'exercise_name' => $workout->exercise_name,
-                'main_muscles' => $workout->main_muscles,
-                'equipment_req' => $workout->equipment_req,
-                'execution_guide' => $workout->execution_guide,
-                'repetitions' => $workout->pivot->repetitions,
-                'sets' => $workout->pivot->sets,
-                'photo_url' => $workout->photo_url,
-            ];
-        });
+        public function getPlan(Request $request)
+        {
+            $plan = $request->user()->workoutPlan()->get()->map(function ($workout) {
+                return [
+                    'id' => $workout->id,
+                    'workout_id' => $workout->id, 
+                    'exercise_name' => $workout->exercise_name,
+                    'main_muscles' => $workout->main_muscles,
+                    'equipment_req' => $workout->equipment_req,
+                    'execution_guide' => $workout->execution_guide,
+                    'repetitions' => $workout->pivot->repetitions,
+                    'sets' => $workout->pivot->sets,
+                    'photo_url' => $workout->photo_url,
+                ];
+            });
 
-        return response()->json($plan);
-    }
+            return response()->json($plan);
+        }
 
     /**
      * @OA\Delete(
@@ -178,9 +179,9 @@ class PlanController extends Controller
     public function removeFromPlan(Request $request, $workout_id)
     {
         $validator = Validator::make(['workout_id' => $workout_id], [
-            'workout_id' => 'required|exists:workouts,id|exists:user_workout_plan,workout_id',
+            'workout_id' => 'required|exists:workouts,id',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,
@@ -188,9 +189,18 @@ class PlanController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-    
+
+        $exists = $request->user()->workoutPlan()->where('workout_id', $workout_id)->exists();
+
+        if (!$exists) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Workout not found in your plan',
+            ], 404);
+        }
+
         $request->user()->workoutPlan()->detach($workout_id);
-    
+
         return response()->json([
             'status' => true,
             'message' => 'Workout removed from your plan',
