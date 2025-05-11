@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Events\MessageSentEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
@@ -10,9 +11,12 @@ use App\Http\Controllers\Api\PredefinedWorkoutController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\MediaController;
 
-// Route::middleware('auth:sanctum')->get('/profile', function (Request $request) {
-//     return $request->user();
-// });
+
+Route::get('/testWebSocket', function (Request $request) {
+    broadcast(new MessageSentEvent('asdfasfas'));
+
+    return 'ok';
+});
 
 
 Route::post('/auth/register', [UserController::class, 'createUser']);
