@@ -28,14 +28,14 @@ class PredefinedWorkoutSeeder extends Seeder
             [
                 'predefined_workout_id' => $w1->id,
                 'title' => 'Wall Push-Ups',
-                'image' => 'avatars/wall_pushups.png',
+                'image' => 'avatars/wall_push-ups.png',
                 'reps_sets' => '3x15',
                 'guide' => "Push against a wall while maintaining a straight body.\nGreat for beginners to build chest strength."
             ],
             [
                 'predefined_workout_id' => $w1->id,
                 'title' => 'Knee Push-Ups',
-                'image' => 'avatars/knee_pushups.png',
+                'image' => 'avatars/knee_push-ups.png',
                 'reps_sets' => '3x12',
                 'guide' => "Keep your knees on the ground for extra support.\nFocus on controlled movement."
             ],
@@ -80,7 +80,7 @@ class PredefinedWorkoutSeeder extends Seeder
             [
                 'predefined_workout_id' => $w2->id,
                 'title' => 'Push-Ups',
-                'image' => 'avatars/pushups.png',
+                'image' => 'avatars/push-ups.png',
                 'reps_sets' => '4x15',
                 'guide' => "Standard push-up with full range motion.\nKeep your core tight and back straight."
             ],
@@ -229,7 +229,7 @@ class PredefinedWorkoutSeeder extends Seeder
             [
                 'predefined_workout_id' => $w5->id,
                 'title' => 'Push-Ups',
-                'image' => 'avatars/pushups.png',
+                'image' => 'avatars/push-ups.png',
                 'reps_sets' => '3x15',
                 'guide' => "Standard push-up.\nEngage core and maintain form throughout."
             ],
