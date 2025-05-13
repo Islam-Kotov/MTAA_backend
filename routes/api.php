@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\PredefinedWorkoutController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\MediaController;
+use App\Http\Controllers\Api\WeeklyPlanController;
 
 
 Route::post('/auth/register', [UserController::class, 'createUser']);
@@ -21,6 +22,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('profile-photo', [UserController::class,'saveProfilePhoto']);
     Route::delete('logout', [UserController::class,'logout']);
     Route::delete('delete', [UserController::class,'deleteProfile']);
+
+    Route::get('/weekly-plan', [WeeklyPlanController::class, 'index']);
+    Route::post('/weekly-plan/add', [WeeklyPlanController::class, 'addWorkout']);
+    Route::delete('/weekly-plan/remove', [WeeklyPlanController::class, 'removeWorkout']);
 
     Route::post('/plan/add', [PlanController::class, 'addToPlan']);
     Route::put('/plan/update', [PlanController::class, 'updatePlanItem']);
