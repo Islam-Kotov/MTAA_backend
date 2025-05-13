@@ -98,4 +98,10 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
         return $friendsFrom->merge($friendsTo);
     }
 
+    public function weeklyPlans()
+    {
+        return $this->hasMany(WeeklyPlan::class);
+    }
+
+
 }
