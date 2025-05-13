@@ -30,6 +30,7 @@ class WeeklyPlanController extends Controller
      *             type="array",
      *             @OA\Items(
      *                 @OA\Property(property="day", type="string", example="Monday"),
+     *                 @OA\Property(property="title", type="string", example="Upper Body Strength"),
      *                 @OA\Property(
      *                     property="workouts",
      *                     type="array",
@@ -52,6 +53,7 @@ class WeeklyPlanController extends Controller
         $result = $plans->map(function ($plan) {
             return [
                 'day' => $plan->day_of_week,
+                'title' => $plan->title,
                 'workouts' => $plan->items->map(function ($item) {
                     return [
                         'workout_id' => $item->workout_id,
@@ -77,6 +79,7 @@ class WeeklyPlanController extends Controller
      *         @OA\JsonContent(
      *             required={"day_of_week", "workout_id", "sets", "repetitions"},
      *             @OA\Property(property="day_of_week", type="string", example="Monday"),
+     *             @OA\Property(property="title", type="string", example="Leg Day"),
      *             @OA\Property(property="workout_id", type="integer", example=1),
      *             @OA\Property(property="sets", type="integer", example=3),
      *             @OA\Property(property="repetitions", type="integer", example=10)
@@ -93,16 +96,28 @@ class WeeklyPlanController extends Controller
             'workout_id' => 'required|exists:workouts,id',
             'sets' => 'required|integer|min:1',
             'repetitions' => 'required|integer|min:1',
+            'title' => 'nullable|string|max:100',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $weeklyPlan = WeeklyPlan::firstOrCreate([
-            'user_id' => $request->user()->id,
-            'day_of_week' => $request->day_of_week,
-        ]);
+        $weeklyPlan = WeeklyPlan::firstOrCreate(
+            [
+                'user_id' => $request->user()->id,
+                'day_of_week' => $request->day_of_week,
+            ],
+            [
+                'title' => $request->title,
+            ]
+        );
+
+        // Обновим title, если он был указан
+        if ($request->filled('title') && $weeklyPlan->title !== $request->title) {
+            $weeklyPlan->title = $request->title;
+            $weeklyPlan->save();
+        }
 
         WeeklyPlanItem::updateOrCreate(
             [
@@ -124,26 +139,19 @@ class WeeklyPlanController extends Controller
      *     summary="Remove a workout from a specific day",
      *     tags={"Weekly Plan"},
      *     security={{"sanctum":{}}},
-     *     @OA\Parameter(
-     *         name="day_of_week",
-     *         in="query",
+     *     @OA\RequestBody(
      *         required=true,
-     *         @OA\Schema(type="string"),
-     *         example="Tuesday"
-     *     ),
-     *     @OA\Parameter(
-     *         name="workout_id",
-     *         in="query",
-     *         required=true,
-     *         @OA\Schema(type="integer"),
-     *         example=2
+     *         @OA\JsonContent(
+     *             required={"day_of_week", "workout_id"},
+     *             @OA\Property(property="day_of_week", type="string", example="Tuesday"),
+     *             @OA\Property(property="workout_id", type="integer", example=2)
+     *         )
      *     ),
      *     @OA\Response(response=200, description="Workout removed from weekly plan"),
      *     @OA\Response(response=422, description="Validation error"),
      *     @OA\Response(response=404, description="Plan not found")
      * )
      */
-
     public function removeWorkout(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -167,14 +175,10 @@ class WeeklyPlanController extends Controller
             ->where('workout_id', $request->workout_id)
             ->delete();
 
-        
-        $remainingItems = WeeklyPlanItem::where('weekly_plan_id', $plan->id)->count();
-
-        if ($remainingItems === 0) {
+        if ($plan->items()->count() === 0) {
             $plan->delete();
         }
 
         return response()->json(['message' => 'Workout removed from weekly plan']);
     }
-
 }
