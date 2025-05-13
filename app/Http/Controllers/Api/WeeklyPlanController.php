@@ -107,13 +107,9 @@ class WeeklyPlanController extends Controller
             [
                 'user_id' => $request->user()->id,
                 'day_of_week' => $request->day_of_week,
-            ],
-            [
-                'title' => $request->title,
             ]
         );
 
-        // Обновим title, если он был указан
         if ($request->filled('title') && $weeklyPlan->title !== $request->title) {
             $weeklyPlan->title = $request->title;
             $weeklyPlan->save();
@@ -131,6 +127,50 @@ class WeeklyPlanController extends Controller
         );
 
         return response()->json(['message' => 'Workout added to weekly plan']);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/api/weekly-plan/update-title",
+     *     summary="Update title of workout day",
+     *     tags={"Weekly Plan"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"day_of_week", "title"},
+     *             @OA\Property(property="day_of_week", type="string", example="Monday"),
+     *             @OA\Property(property="title", type="string", example="Chest Focus")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Title updated"),
+     *     @OA\Response(response=404, description="Plan not found"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
+    public function updateTitle(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'day_of_week' => 'required|string',
+            'title' => 'required|string|max:100',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $plan = WeeklyPlan::where('user_id', $request->user()->id)
+            ->where('day_of_week', $request->day_of_week)
+            ->first();
+
+        if (!$plan) {
+            return response()->json(['message' => 'Plan not found'], 404);
+        }
+
+        $plan->title = $request->title;
+        $plan->save();
+
+        return response()->json(['message' => 'Title updated']);
     }
 
     /**
