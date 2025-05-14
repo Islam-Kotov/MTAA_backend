@@ -132,7 +132,7 @@ class WeeklyPlanController extends Controller
     /**
      * @OA\Patch(
      *     path="/api/weekly-plan/update-title",
-     *     summary="Update title of workout day",
+     *     summary="Update or create title for specific day",
      *     tags={"Weekly Plan"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
@@ -144,7 +144,6 @@ class WeeklyPlanController extends Controller
      *         )
      *     ),
      *     @OA\Response(response=200, description="Title updated"),
-     *     @OA\Response(response=404, description="Plan not found"),
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
@@ -159,13 +158,10 @@ class WeeklyPlanController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $plan = WeeklyPlan::where('user_id', $request->user()->id)
-            ->where('day_of_week', $request->day_of_week)
-            ->first();
-
-        if (!$plan) {
-            return response()->json(['message' => 'Plan not found'], 404);
-        }
+        $plan = WeeklyPlan::firstOrCreate([
+            'user_id' => $request->user()->id,
+            'day_of_week' => $request->day_of_week,
+        ]);
 
         $plan->title = $request->title;
         $plan->save();
