@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PredefinedWorkoutController;
 use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\WeeklyPlanController;
+use App\Http\Controllers\RunController;
 
 
 Route::post('/auth/register', [UserController::class, 'createUser']);
@@ -44,6 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/friends/decline/{id}', [FriendController::class, 'declineRequest']); // reject
     Route::get('/friends', [FriendController::class, 'list']); // list of friends and requests
     Route::delete('/friends/remove/{id}', [FriendController::class, 'removeFriend']); //delete
+
+    Route::get('/runs', [RunController::class, 'index']);
+    Route::post('/runs', [RunController::class, 'store']);
 
     Route::get('/sayHello', function (Request $request) {
         broadcast(new MessageSentEvent('Hello!'));
