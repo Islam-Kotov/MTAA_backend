@@ -8,15 +8,15 @@ use Illuminate\Support\Facades\Auth;
 
 class RunController extends Controller
 {
-
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'distance' => 'required|numeric',
-            'steps' => 'required|integer',
-            'duration' => 'required|integer',
-            'avg_speed' => 'required|numeric',
-            'started_at' => 'required|date',
+            'distance'    => 'required|numeric',
+            'steps'       => 'required|integer',
+            'duration'    => 'required|integer',
+            'avg_speed'   => 'required|numeric',
+            'started_at'  => 'required|date',
+            'route'       => 'nullable|array',
         ]);
 
         $run = Run::create([
