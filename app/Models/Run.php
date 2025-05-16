@@ -16,6 +16,12 @@ class Run extends Model
         'duration',
         'avg_speed',
         'started_at',
+        'route',
+    ];
+
+    protected $casts = [
+        'route' => 'array', 
+        'started_at' => 'datetime', 
     ];
 
     public function user()
