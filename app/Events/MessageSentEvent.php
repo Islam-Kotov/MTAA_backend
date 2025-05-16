@@ -13,15 +13,16 @@ use Illuminate\Queue\SerializesModels;
 
 class MessageSentEvent implements ShouldBroadcast
 {
-    use InteractsWithBroadcasting, InteractsWithSockets;
+    use InteractsWithBroadcasting, InteractsWithSockets, SerializesModels;
+
+    public $challenge;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(public string $message)
+    public function __construct($challenge)
     {
-        //
-
+        $this->challenge = $challenge;
     }
 
     /**
@@ -32,8 +33,20 @@ class MessageSentEvent implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('test'),
+            new Channel('challenges'),
         ];
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            'challenge' => $this->challenge,
+        ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'current.challenge';
     }
 
 }

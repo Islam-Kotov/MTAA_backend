@@ -8,21 +8,20 @@ use App\Models\Challenge;
 
 class ChallengeController extends Controller
 {
-    //
-    // public function getCurrentChallenge()
-    // {
-    //     $intervalMinutes = 5; // Can change to 1440 for daily
+    public function getCurrentChallenge()
+    {
+        $intervalMinutes = 1; // Can change to 1440 for daily
 
-    //     $totalChallenges = Challenge::count();
-    //     if ($totalChallenges === 0) {
-    //         return response()->json(null);
-    //     }
+        $totalChallenges = Challenge::count();
+        if ($totalChallenges === 0) {
+            return response()->json(null);
+        }
 
-    //     $minutesSinceEpoch = floor(now()->timestamp / 60);
-    //     $index = floor($minutesSinceEpoch / $intervalMinutes) % $totalChallenges;
+        $minutesSinceEpoch = floor(now()->timestamp / 60);
+        $index = floor($minutesSinceEpoch / $intervalMinutes) % $totalChallenges;
 
-    //     $challenge = Challenge::orderBy('id')->skip($index)->first();
+        $challenge = Challenge::orderBy('id')->skip($index)->first();
 
-    //     return response()->json($challenge);
-    // }
+        return response()->json($challenge);
+    }
 }

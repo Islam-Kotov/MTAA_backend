@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\FriendController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\WeeklyPlanController;
 use App\Http\Controllers\RunController;
+use App\Http\Controllers\Api\ChallengeController;
 
 
 Route::post('/auth/register', [UserController::class, 'createUser']);
@@ -49,8 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/runs', [RunController::class, 'index']);
     Route::post('/runs', [RunController::class, 'store']);
 
-    Route::get('/sayHello', function (Request $request) {
-        broadcast(new MessageSentEvent('Hello!'));
+    Route::get('/getCurrentChallenge', function (Request $request) {
+        $challenge = app(ChallengeController::class)->getCurrentChallenge()->getData();
+
+        broadcast(new MessageSentEvent($challenge));
 
         return 'ok';
     });
