@@ -57,7 +57,7 @@ class WeeklyPlanController extends Controller
                 'day' => $plan->day_of_week,
                 'title' => $plan->title,
                 'description' => $plan->description,
-                'scheduled_time' => $plan->scheduled_time,
+                'scheduled_time' => optional($plan->scheduled_time)->format('H:i'),
                 'workouts' => $plan->items->map(function ($item) {
                     return [
                         'workout_id' => $item->workout_id,
@@ -147,7 +147,7 @@ class WeeklyPlanController extends Controller
      *             @OA\Property(property="scheduled_time", type="string", format="time", example="14:00")
      *         )
      *     ),
-     *     @OA\Response(response=200, description="Meta info updated"),
+     *     @OA\Response(response=200, description="Metadata updated"),
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
