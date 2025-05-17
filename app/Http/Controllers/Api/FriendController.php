@@ -7,6 +7,7 @@ use App\Services\Firebase;
 use Illuminate\Http\Request;
 use App\Models\Friend;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Tag(
@@ -71,6 +72,8 @@ class FriendController extends Controller
                     'status' => 'pending',
                 ]);
 
+                $firebase->sendToUser($recipient, 'New friend request!', "You got a new friend request from " . Auth::user()->name . ".");
+
                 return response()->json(['message' => 'Friend request re-sent']);
             }
         }
@@ -81,7 +84,7 @@ class FriendController extends Controller
             'status' => 'pending',
         ]);
 
-        $firebase->sendToUser($recipient, 'New message', 'You got a new message.');
+        $firebase->sendToUser($recipient, 'New friend request!', "You got a new friend request from " . Auth::user()->name . ".");
 
         return response()->json(['message' => 'Friend request sent']);
     }

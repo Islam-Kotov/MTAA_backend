@@ -392,25 +392,24 @@ class UserController extends Controller
      * )
      */
 
-    public function logout(Firebase $firebase)
+    public function logout()
     {
-        $firebase->sendToUser(Auth::user(), 'New message', 'You got a new message.');
-        // try {
-        //     $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        //     $user->tokens()->delete();
+            $user->tokens()->delete();
 
-        //     return response()->json([
-        //         'status'=> true,
-        //         'message'=> 'User Logout Successful'
-        //     ],200);
+            return response()->json([
+                'status'=> true,
+                'message'=> 'User Logout Successful'
+            ],200);
 
-        // } catch (\Throwable $th) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => $th->getMessage()
-        //     ], 500);
-        // }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
         /**
