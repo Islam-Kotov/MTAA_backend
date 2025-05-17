@@ -2,6 +2,7 @@
 
 
 use App\Events\MessageSentEvent;
+use App\Http\Controllers\Api\DeviceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
@@ -51,7 +52,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/runs', [RunController::class, 'store']);
 
     Route::get('/leaderboard/friends', [\App\Http\Controllers\LeaderboardController::class, 'friendsLeaderboard']);
-
+  
+    Route::post('/devices/save', [DeviceController::class, 'store']);
 
     Route::get('/getCurrentChallenge', function (Request $request) {
         $challenge = app(ChallengeController::class)->getCurrentChallenge()->getData();

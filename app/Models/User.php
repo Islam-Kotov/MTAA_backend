@@ -79,6 +79,11 @@ class User extends Authenticatable implements \Illuminate\Contracts\Auth\CanRese
         return $this->hasMany(Friend::class, 'friend_id');
     }
 
+    public function deviceTokens()
+    {
+        return $this->hasMany(DeviceToken::class, 'user_id');
+    }
+
     public function friends()
     {
         
