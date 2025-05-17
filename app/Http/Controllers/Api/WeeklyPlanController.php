@@ -32,7 +32,7 @@ class WeeklyPlanController extends Controller
      *                 @OA\Property(property="day", type="string", example="Monday"),
      *                 @OA\Property(property="title", type="string", example="Leg Day"),
      *                 @OA\Property(property="description", type="string", example="Focus on quads and glutes"),
-     *                 @OA\Property(property="scheduled_time", type="string", example="14:00"),
+     *                 @OA\Property(property="scheduled_time", type="string", example="14:30:00"),
      *                 @OA\Property(
      *                     property="workouts",
      *                     type="array",
@@ -57,7 +57,7 @@ class WeeklyPlanController extends Controller
                 'day' => $plan->day_of_week,
                 'title' => $plan->title,
                 'description' => $plan->description,
-                'scheduled_time' => optional($plan->scheduled_time)->format('H:i'),
+                'scheduled_time' => $plan->scheduled_time, // строка с "HH:mm:ss"
                 'workouts' => $plan->items->map(function ($item) {
                     return [
                         'workout_id' => $item->workout_id,
@@ -144,7 +144,7 @@ class WeeklyPlanController extends Controller
      *             @OA\Property(property="day_of_week", type="string", example="Wednesday"),
      *             @OA\Property(property="title", type="string", example="Chest Day"),
      *             @OA\Property(property="description", type="string", example="Afternoon stretch and core workout"),
-     *             @OA\Property(property="scheduled_time", type="string", format="time", example="14:00")
+     *             @OA\Property(property="scheduled_time", type="string", example="14:00")
      *         )
      *     ),
      *     @OA\Response(response=200, description="Metadata updated"),
