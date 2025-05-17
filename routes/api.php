@@ -54,6 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/leaderboard/friends', [\App\Http\Controllers\LeaderboardController::class, 'friendsLeaderboard']);
   
     Route::post('/devices/save', [DeviceController::class, 'store']);
+    Route::delete('/devices/delete/{token}', [DeviceController::class, 'delete']);
 
     Route::get('/getCurrentChallenge', function (Request $request) {
         $challenge = app(ChallengeController::class)->getCurrentChallenge()->getData();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\Firebase;
 use Illuminate\Http\Request;
 use App\Models\Friend;
 use App\Models\User;
@@ -32,7 +33,7 @@ class FriendController extends Controller
      *     @OA\Response(response=400, description="Invalid or duplicate request"),
      * )
      */
-    public function sendRequest(Request $request)
+    public function sendRequest(Request $request, Firebase $firebase)
     {
         $request->validate([
             'email' => 'required|email|exists:users,email',
@@ -79,6 +80,8 @@ class FriendController extends Controller
             'friend_id' => $recipient->id,
             'status' => 'pending',
         ]);
+
+        $firebase->sendToUser($recipient, 'New message', 'You got a new message.');
 
         return response()->json(['message' => 'Friend request sent']);
     }

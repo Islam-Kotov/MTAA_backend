@@ -27,4 +27,13 @@ class DeviceController extends Controller
 
         return response()->json(['success' => true], 200);
     }
+
+    public function delete(Request $request, $token)
+    {
+        $deleted = DeviceToken::where('user_id', Auth::id())
+            ->where('token', $token)
+            ->delete();
+
+        return response()->json(['success' => true, 'deleted' => $deleted > 0], 200);
+    }
 }
