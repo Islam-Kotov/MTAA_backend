@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/runs', [RunController::class, 'index']);
     Route::post('/runs', [RunController::class, 'store']);
 
+    Route::get('/leaderboard/friends', [\App\Http\Controllers\LeaderboardController::class, 'friendsLeaderboard']);
+  
     Route::post('/devices/save', [DeviceController::class, 'store']);
 
     Route::get('/getCurrentChallenge', function (Request $request) {
