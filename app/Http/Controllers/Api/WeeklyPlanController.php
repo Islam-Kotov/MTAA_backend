@@ -32,7 +32,7 @@ class WeeklyPlanController extends Controller
      *                 @OA\Property(property="day", type="string", example="Monday"),
      *                 @OA\Property(property="title", type="string", example="Leg Day"),
      *                 @OA\Property(property="description", type="string", example="Focus on quads and glutes"),
-     *                 @OA\Property(property="scheduled_time", type="string", example="14:00:00"),
+     *                 @OA\Property(property="scheduled_time", type="string", example="14:00"),
      *                 @OA\Property(
      *                     property="workouts",
      *                     type="array",
@@ -133,48 +133,8 @@ class WeeklyPlanController extends Controller
 
     /**
      * @OA\Patch(
-     *     path="/api/weekly-plan/update-title",
-     *     summary="Update or create title for specific day",
-     *     tags={"Weekly Plan"},
-     *     security={{"sanctum":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"day_of_week", "title"},
-     *             @OA\Property(property="day_of_week", type="string", example="Monday"),
-     *             @OA\Property(property="title", type="string", example="Chest Focus")
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Title updated"),
-     *     @OA\Response(response=422, description="Validation error")
-     * )
-     */
-    public function updateTitle(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'day_of_week' => 'required|string',
-            'title' => 'required|string|max:100',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $plan = WeeklyPlan::firstOrCreate([
-            'user_id' => $request->user()->id,
-            'day_of_week' => $request->day_of_week,
-        ]);
-
-        $plan->title = $request->title;
-        $plan->save();
-
-        return response()->json(['message' => 'Title updated']);
-    }
-
-    /**
-     * @OA\Patch(
-     *     path="/api/weekly-plan/update-details",
-     *     summary="Update description and scheduled_time for a specific day",
+     *     path="/api/weekly-plan/update-meta",
+     *     summary="Update title, description and scheduled_time for a specific day",
      *     tags={"Weekly Plan"},
      *     security={{"sanctum":{}}},
      *     @OA\RequestBody(
@@ -182,18 +142,20 @@ class WeeklyPlanController extends Controller
      *         @OA\JsonContent(
      *             required={"day_of_week"},
      *             @OA\Property(property="day_of_week", type="string", example="Wednesday"),
+     *             @OA\Property(property="title", type="string", example="Chest Day"),
      *             @OA\Property(property="description", type="string", example="Afternoon stretch and core workout"),
      *             @OA\Property(property="scheduled_time", type="string", format="time", example="14:00")
      *         )
      *     ),
-     *     @OA\Response(response=200, description="Details updated"),
+     *     @OA\Response(response=200, description="Meta info updated"),
      *     @OA\Response(response=422, description="Validation error")
      * )
      */
-    public function updateDetails(Request $request)
+    public function updateMeta(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'day_of_week' => 'required|string',
+            'title' => 'nullable|string|max:100',
             'description' => 'nullable|string',
             'scheduled_time' => 'nullable|date_format:H:i',
         ]);
@@ -207,6 +169,10 @@ class WeeklyPlanController extends Controller
             'day_of_week' => $request->day_of_week,
         ]);
 
+        if ($request->filled('title')) {
+            $plan->title = $request->title;
+        }
+
         if ($request->filled('description')) {
             $plan->description = $request->description;
         }
@@ -217,7 +183,7 @@ class WeeklyPlanController extends Controller
 
         $plan->save();
 
-        return response()->json(['message' => 'Details updated']);
+        return response()->json(['message' => 'Metadata updated']);
     }
 
     /**
