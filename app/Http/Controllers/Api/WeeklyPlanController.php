@@ -30,7 +30,9 @@ class WeeklyPlanController extends Controller
      *             type="array",
      *             @OA\Items(
      *                 @OA\Property(property="day", type="string", example="Monday"),
-     *                 @OA\Property(property="title", type="string", example="Upper Body Strength"),
+     *                 @OA\Property(property="title", type="string", example="Leg Day"),
+     *                 @OA\Property(property="description", type="string", example="Focus on quads and glutes"),
+     *                 @OA\Property(property="scheduled_time", type="string", example="14:00:00"),
      *                 @OA\Property(
      *                     property="workouts",
      *                     type="array",
@@ -54,6 +56,8 @@ class WeeklyPlanController extends Controller
             return [
                 'day' => $plan->day_of_week,
                 'title' => $plan->title,
+                'description' => $plan->description,
+                'scheduled_time' => $plan->scheduled_time,
                 'workouts' => $plan->items->map(function ($item) {
                     return [
                         'workout_id' => $item->workout_id,
@@ -103,12 +107,10 @@ class WeeklyPlanController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $weeklyPlan = WeeklyPlan::firstOrCreate(
-            [
-                'user_id' => $request->user()->id,
-                'day_of_week' => $request->day_of_week,
-            ]
-        );
+        $weeklyPlan = WeeklyPlan::firstOrCreate([
+            'user_id' => $request->user()->id,
+            'day_of_week' => $request->day_of_week,
+        ]);
 
         if ($request->filled('title') && $weeklyPlan->title !== $request->title) {
             $weeklyPlan->title = $request->title;
@@ -167,6 +169,55 @@ class WeeklyPlanController extends Controller
         $plan->save();
 
         return response()->json(['message' => 'Title updated']);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/api/weekly-plan/update-details",
+     *     summary="Update description and scheduled_time for a specific day",
+     *     tags={"Weekly Plan"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"day_of_week"},
+     *             @OA\Property(property="day_of_week", type="string", example="Wednesday"),
+     *             @OA\Property(property="description", type="string", example="Afternoon stretch and core workout"),
+     *             @OA\Property(property="scheduled_time", type="string", format="time", example="14:00")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Details updated"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
+     */
+    public function updateDetails(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'day_of_week' => 'required|string',
+            'description' => 'nullable|string',
+            'scheduled_time' => 'nullable|date_format:H:i',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $plan = WeeklyPlan::firstOrCreate([
+            'user_id' => $request->user()->id,
+            'day_of_week' => $request->day_of_week,
+        ]);
+
+        if ($request->filled('description')) {
+            $plan->description = $request->description;
+        }
+
+        if ($request->filled('scheduled_time')) {
+            $plan->scheduled_time = $request->scheduled_time;
+        }
+
+        $plan->save();
+
+        return response()->json(['message' => 'Details updated']);
     }
 
     /**
