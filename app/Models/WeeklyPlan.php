@@ -17,6 +17,10 @@ class WeeklyPlan extends Model
         'scheduled_time',
     ];
 
+    protected $casts = [
+        'scheduled_time' => 'string', 
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
