@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/weekly-plan/add', [WeeklyPlanController::class, 'addWorkout']);
     Route::delete('/weekly-plan/remove', [WeeklyPlanController::class, 'removeWorkout']);
     Route::patch('/weekly-plan/update-title', [WeeklyPlanController::class, 'updateTitle']);
+    Route::patch('/weekly-plan/update-meta', [WeeklyPlanController::class, 'updateMeta']);
+
 
 
     Route::post('/plan/add', [PlanController::class, 'addToPlan']);
