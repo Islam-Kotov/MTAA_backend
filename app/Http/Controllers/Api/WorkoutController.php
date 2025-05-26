@@ -89,7 +89,7 @@ class WorkoutController extends Controller
             'exercise_photo',
         ]);
 
-        $baseUrl = 'http://192.168.1.36:8000';
+        $baseUrl = 'http://147.175.162.111:8000';
 
         $workouts->transform(function ($item) use ($baseUrl) {
             if ($item->exercise_photo) {
@@ -138,7 +138,7 @@ class WorkoutController extends Controller
             return response()->json(['message' => 'Exercise not found'], 404);
         }
 
-        $baseUrl = 'http://192.168.1.36:8000';
+        $baseUrl = 'http://147.175.162.111:8000';
 
         return response()->json([
             'exercise_name' => $workout->exercise_name,

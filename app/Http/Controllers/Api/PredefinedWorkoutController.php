@@ -115,7 +115,7 @@ class PredefinedWorkoutController extends Controller
                 return response()->json(['message' => 'Workout not found'], 404);
             }
 
-            $baseUrl = 'http://192.168.1.36:8000';
+            $baseUrl = 'http://147.175.162.111:8000';
 
             return response()->json([
                 'title' => $workout->title,
